@@ -1,0 +1,1 @@
+# comfyui_wan_empty_latent
