@@ -1,4 +1,9 @@
+import torch
+
 class wanEmptyLatent:
+    def __init__(self):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+
     @classmethod
     def INPUT_TYPES(cls):
         return {
@@ -18,8 +23,8 @@ class wanEmptyLatent:
             },
         }
 
-    RETURN_TYPES = ("INT", "INT")
-    RETURN_NAMES = ("width", "height")
+    RETURN_TYPES = ("INT", "INT", "IMAGE")  # 返回宽度、高度、空白图片
+    RETURN_NAMES = ("width", "height", "image")
     FUNCTION = "get_resolution"
     CATEGORY = "wanNodes"
 
@@ -36,4 +41,10 @@ class wanEmptyLatent:
             "832x1104 (3:4)": (832, 1104),
             "1104x832 (4:3)": (1104, 832),
         }
-        return resolution_map.get(resolution, (720, 720))  # 默认返回 720x720
+        
+        width, height = resolution_map.get(resolution, (720, 720))  # 默认 720x720
+
+        # 创建一张空白图片（黑色）
+        image_tensor = torch.zeros(1, height, width, 3, dtype=torch.float32, device=self.device)  
+
+        return width, height, image_tensor
